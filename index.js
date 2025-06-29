@@ -8,11 +8,13 @@ app.use(express.json())
 app.use(cors())
 
 const eventRoutes = require('./routes/eventRoute')
+const userRoutes = require('./routes/userRoute')
 
 
 connectDB()
 
 app.use('/api', eventRoutes)
+app.use('/api', userRoutes)
 
 
 app.get('/', async (req, res) => {
