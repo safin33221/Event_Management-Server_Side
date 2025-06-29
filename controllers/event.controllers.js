@@ -14,6 +14,16 @@ const postEvent = async (req, res) => {
 }
 
 
+const getEvents = async (req, res) => {
+    try {
+        const eventCollection = client.db('Event-Managements').collection('events')
+        const result = await eventCollection.find().toArray()
+        res.status(200).send({ message: "Events are get successfully", event: result })
+    } catch (error) {
+        return res.status(500).send({ message: "Internal Server Errors", error })
+    }
+}
+
 const deleteEvent = async (req, res) => {
     const eventCollection = client.db('Event-Managements').collection('events')
 
@@ -30,4 +40,4 @@ const deleteEvent = async (req, res) => {
 
 
 }
-module.exports = { postEvent, deleteEvent }
+module.exports = { postEvent, deleteEvent, getEvents }
