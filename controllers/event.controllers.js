@@ -24,11 +24,31 @@ const getEvents = async (req, res) => {
     }
 }
 
+
+const putEvents = async (req, res) => {
+    try {
+        const id = req.params.eventId
+        const updateBookData = req.body;
+        const eventCollection = client.db('Event-Managements').collection('events')
+        const query = { _id: new ObjectId(id) }
+        const updateDoc = {
+            $set: {
+                ...updateBookData
+            }
+        }
+        const result = await eventCollection.updateOne(query, updateDoc)
+        res.status(200).send({ message: "Event is updated successfully", event: result })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: "Internal Server Errors", error })
+    }
+}
+
 const deleteEvent = async (req, res) => {
     const eventCollection = client.db('Event-Managements').collection('events')
 
     try {
-        const id = req.params.id
+        const id = req.params.eventId
         const query = { _id: new ObjectId(id) }
         const result = eventCollection.deleteOne(query)
         res.status(201).send({ message: "Event is deleted successfully", event: result })
@@ -40,4 +60,4 @@ const deleteEvent = async (req, res) => {
 
 
 }
-module.exports = { postEvent, deleteEvent, getEvents }
+module.exports = { postEvent, deleteEvent, getEvents, putEvents }
