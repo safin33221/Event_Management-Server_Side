@@ -7,8 +7,12 @@ const PORT = 5000
 app.use(express.json())
 app.use(cors())
 
+const eventRoutes = require('./routes/eventRoute')
+
 
 connectDB()
+
+app.use('/api', eventRoutes)
 
 
 app.get('/', async (req, res) => {
