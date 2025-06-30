@@ -3,10 +3,13 @@ const { client } = require("../utils/db");
 
 const postEvent = async (req, res) => {
     const data = req.body
-    console.log(data);
+    const event = {
+        ...data,
+        DateAndTime: new Date()
+    }
     try {
         const eventCollection = client.db('Event-Managements').collection('events')
-        const result = await eventCollection.insertOne(data)
+        const result = await eventCollection.insertOne(event)
         res.status(200).send({ message: "Event is created successfully", event: result })
     } catch (error) {
         return res.status(500).send({ message: "Internal Server Errors", error })

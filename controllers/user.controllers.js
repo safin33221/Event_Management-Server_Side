@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { client } = require("../utils/db")
 const bcrypt = require('bcrypt');
 const postUser = async (req, res) => {
@@ -10,7 +11,7 @@ const postUser = async (req, res) => {
         }
         const user = {
             ...userData,
-            createAT: new Date().toLocaleDateString()
+            createAT: new Date()
         }
         const hashPassword = await bcrypt.hash(userData.password, 10)
         user.password = hashPassword
@@ -25,4 +26,23 @@ const postUser = async (req, res) => {
 
 }
 
-module.exports = { postUser }
+
+
+const login = async (req, res) => {
+    const { email, password } = req.body;
+    const userCollection = await client.db('Event-Managements').collection('users')
+    const user = await userCollection.findOne({ email })
+    if (!user) return res.status(400).send({ message: "User not Found" })
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) return res.status(400).send({ message: "Invalid Credential" })
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '3d' })
+
+    return res.status(200).send({
+        token, user
+    })
+
+
+}
+
+module.exports = { postUser, login }
